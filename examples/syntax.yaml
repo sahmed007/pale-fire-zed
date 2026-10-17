@@ -1,0 +1,24 @@
+# Keys, anchors, aliases, scalars, and block strings.
+defaults: &defaults
+  enabled: true
+  limit: 42
+  ratio: 3.14
+  fallback: null
+
+items:
+  - <<: *defaults
+    name: ready
+    tags: [warm, muted]
+    message: "first line\nsecond line"
+  - <<: *defaults
+    name: waiting
+    enabled: false
+    limit: 2
+
+description: |
+  A restrained palette for long reading sessions.
+  Keep numbers distinct from namespaces.
+
+notes: >
+  Folded text joins these lines
+  into a single paragraph.

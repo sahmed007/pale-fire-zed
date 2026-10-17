@@ -1,0 +1,28 @@
+:root {
+  --surface: #404040;
+  --foreground: rgb(224 224 201);
+  --spacing: 1.25rem;
+}
+
+/* Custom properties, selectors, units, functions, and at-rules. */
+body {
+  color: var(--foreground);
+  background: var(--surface);
+  font-family: system-ui, sans-serif;
+}
+
+.card[data-status="ready"] {
+  max-width: min(90vw, 42rem);
+  padding: calc(var(--spacing) * 2);
+  border: 1px solid #9cdbde;
+  border-radius: 0.5rem;
+}
+
+.card > button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  transition: transform 150ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card > button { transition: none; }
+}

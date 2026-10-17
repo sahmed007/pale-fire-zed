@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pale Fire preview</title>
+    <link rel="stylesheet" href="syntax.css">
+  </head>
+  <body>
+    <!-- Tags, attributes, entities, and embedded languages. -->
+    <main class="card" data-status="ready">
+      <h1>Items &amp; counts</h1>
+      <p>Total: <output id="count">42</output></p>
+      <button type="button" aria-label="Increment count">Add two</button>
+    </main>
+    <script>
+      const output = document.querySelector("#count");
+      document.querySelector("button").addEventListener("click", () => {
+        if (!output) return;
+        output.value = String(Number(output.value) + 2);
+      });
+    </script>
+  </body>
+</html>

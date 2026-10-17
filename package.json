@@ -1,9 +1,9 @@
 {
   "name": "pale-fire-zed-theme",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "build": "node scripts/build-theme.mjs",
-    "check": "python3 scripts/validate.py"
+    "check": "python3 -m unittest discover -s scripts -p \"test_*.py\" && python3 scripts/validate.py"
   }
 }

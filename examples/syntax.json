@@ -1,0 +1,17 @@
+{
+  "name": "Pale Fire preview",
+  "enabled": true,
+  "limit": 42,
+  "ratio": 3.14,
+  "offset": -2,
+  "fallback": null,
+  "message": "ready\nnext line\t\"quoted\"",
+  "items": [
+    { "id": 1, "status": "ready", "tags": ["warm", "muted"] },
+    { "id": 2, "status": "waiting", "tags": [] }
+  ],
+  "appearance": {
+    "background": "#404040",
+    "font": { "family": "monospace", "size": 14 }
+  }
+}

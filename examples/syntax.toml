@@ -1,0 +1,22 @@
+# Tables, arrays, booleans, dates, and numeric formats.
+title = "Pale Fire preview"
+enabled = true
+limit = 42
+ratio = 3.14
+mask = 0xFF
+updated = 2026-10-17T12:00:00Z
+message = "ready\nnext line"
+
+[appearance]
+background = "#404040"
+font_family = "monospace"
+font_size = 14
+tags = ["warm", "muted"]
+
+[[items]]
+name = "ready"
+count = 42
+
+[[items]]
+name = "waiting"
+count = 2

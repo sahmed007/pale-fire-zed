@@ -1,0 +1,17 @@
+<%# Embedded Ruby, HTML attributes, symbols, and interpolation. %>
+<% items = [{ name: "ready", count: 42 }, { name: "waiting", count: 2 }] %>
+<section class="card" data-status="ready">
+  <h1>Item counts</h1>
+  <% if items.empty? %>
+    <p>No items yet.</p>
+  <% else %>
+    <ul>
+      <% items.each do |item| %>
+        <li data-count="<%= item[:count] %>">
+          <strong><%= item[:name] %></strong>
+          <span><%= "Count: #{item[:count]}" %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>
