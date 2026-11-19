@@ -8,6 +8,18 @@ from functools import lru_cache
 from itertools import product
 
 MIN_TEXT_CONTRAST = 4.5
+MIN_LIGHT_TEXT_CONTRAST = 5.5
+
+
+def minimum_text_contrast(appearance):
+    return MIN_LIGHT_TEXT_CONTRAST if appearance == "light" else MIN_TEXT_CONTRAST
+
+
+def failing_text_cases(cases, appearance):
+    minimum = minimum_text_contrast(appearance)
+    return [case for case in cases if case[3] < minimum]
+
+
 UI_SURFACES = (
     "background", "surface.background", "elevated_surface.background",
     "panel.background", "status_bar.background", "title_bar.background",
@@ -149,7 +161,7 @@ def contrast_cases(style):
 
 
 def diagnostic_indicator_cases(style):
-    """Limited 3:1 check for diagnostic colors/borders against adjacent surfaces."""
+    """Limited 3:1 check for diagnostic foregrounds against adjacent surfaces."""
     backgrounds = list(editor_backgrounds(style))
     for key in UI_SURFACES:
         base = composite(style[key], style['background'])
@@ -158,6 +170,5 @@ def diagnostic_indicator_cases(style):
     backgrounds = list(unique_backgrounds(backgrounds))
     for role in ('error', 'warning', 'info', 'hint'):
         adjacent = backgrounds + [(f'{role}.background', composite(style[f'{role}.background'], style['background']))]
-        for key in (role, f'{role}.border'):
-            for label, background in adjacent:
-                yield key, label, text_ratio(style[key], background)
+        for label, background in adjacent:
+            yield role, label, text_ratio(style[role], background)

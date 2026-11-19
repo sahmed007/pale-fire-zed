@@ -5,6 +5,16 @@ User-visible changes are recorded here for each release. Versions match
 
 ## Unreleased
 
+## 0.2.1
+
+### Changed
+
+- Unified workspace panels, title/status bars, tab strips/inactive tabs, and terminal backgrounds in every variant. Stealth also uses one background for the editor, gutter, breadcrumbs, controls, and floating menus/dialogs, while retaining state highlights.
+- Matched active tabs, line-number gutters, breadcrumbs, and editor subheaders to the code background in every variant, keeping the surrounding workspace distinct in non-Stealth variants.
+- Rebalanced Light and Paper syntax hues for clearer role distinction with a 5.5:1 text-contrast minimum across tested states. Strengthened UI labels, diagnostic foregrounds, and terminal colors.
+- Softened all opaque borders across all six variants, including focus, selection, diagnostic, and status outlines, using 25% original color in dark variants and 35% in Light/Paper, blended with each variant’s background. Transparent borders remain unchanged.
+- Limited the separate 3:1 diagnostic visibility check to foregrounds; subdued diagnostic borders are now excluded.
+
 ## 0.2.0
 
 ### Added

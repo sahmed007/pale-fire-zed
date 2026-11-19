@@ -1,6 +1,6 @@
 # Text contrast and palette review
 
-Pale Fire targets **WCAG 2.2 SC 1.4.3 (Contrast Minimum)** for theme-controlled readable text: at least **4.5:1** at normal text sizes in every variant. This is a measured text-contrast claim, not full WCAG AA conformance for Zed. Keyboard interaction, focus indicators, screen-reader support, and other accessibility requirements are outside this theme's text-contrast audit.
+Pale Fire targets **WCAG 2.2 SC 1.4.3 (Contrast Minimum)** for theme-controlled readable text: at least **4.5:1** at normal text sizes in dark variants and **5.5:1** in Light and Paper. The stronger light-theme target darkens readable text while preserving backgrounds and subdued borders. This is a measured text-contrast claim, not full WCAG AA conformance for Zed. Keyboard interaction, focus indicators, screen-reader support, and other accessibility requirements are outside this theme's text-contrast audit.
 
 The [W3C criterion](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) sets the 4.5:1 threshold and exempts genuinely inactive controls. Muted text, comments, placeholders, ignored files, and dim terminal output are readable content and are included here.
 
@@ -29,23 +29,25 @@ sRGB channels are alpha-composited without intermediate rounding, linearized for
 | Pale Fire | 3,715 | 4.656856:1 | `terminal.ansi.dim_black` on `terminal.background + players[6].selection` |
 | Pale Fire Darker | 3,715 | 4.652244:1 | `terminal.ansi.dim_black` on `terminal.background + players[4].selection` |
 | Pale Fire High Contrast | 3,715 | 4.655757:1 | `terminal.ansi.dim_black` on `terminal.background + players[1].selection` |
-| Pale Fire Stealth | 3,715 | 4.651030:1 | `terminal.ansi.dim_black` on `terminal.background + players[3].selection` |
-| Pale Fire Light | 3,639 | 4.650108:1 | `syntax.constant.numeric` on `editor.background + players[0].selection` |
-| Pale Fire Paper | 3,639 | 4.650108:1 | `syntax.constant.numeric` on `editor.background + players[0].selection` |
+| Pale Fire Stealth | 3,662 | 4.651030:1 | `terminal.ansi.dim_black` on `terminal.background + players[3].selection` |
+| Pale Fire Light | 3,639 | 5.564300:1 | `syntax.diff.plus` on `editor.background + players[0].selection` |
+| Pale Fire Paper | 3,639 | 5.564300:1 | `syntax.diff.plus` on `editor.background + players[0].selection` |
 
 Refresh this table from `npm run check` whenever the palette or coverage changes. These results cover defined color pairs; they do not measure a font's rasterized edge pixels.
 
 ## Palette choices
 
+Workspace panels, title/status bars, tab strips/inactive tabs, and terminal backgrounds share one base color: Pale Fire `#242424`, Darker `#0E0E0E`, High Contrast `#1B1B1B`, Light `#EBE6DC`, and Paper `#E8E8E3`. In these variants, the code area, active tabs, line-number gutter, breadcrumbs, and editor subheaders share the editor background, separate from the surrounding workspace. Elevated menus/dialogs retain their existing colors. Stealth uses `#222222` for all base surfaces, including the editor, gutter, breadcrumbs, controls, terminal, and menus/dialogs. State highlights remain separate. These surface mappings do not change palette inputs used for border blends or highlight fills.
+
 Namespaces use dusty steel blue, named types gray lavender, macros clearer blue, built-in types teal, and functions subdued blue-green. Keywords use straw gold; properties use copper-orange, strings olive, and symbolic values earthy red. Type parameters use pale desaturated violet. Elixir atoms and Ruby symbols already emit `string.special.symbol`, so they share that role without a language-specific palette.
 
 Regression checks require at least 0.10 OKLab distance between keywords and symbols, and 0.075 between keywords and properties and between symbols and strings, named types, or type parameters. Strings also require at least 0.075 distance from variables, numbers, functions, built-in types, and keywords. These checks complement visual review of adjacent tokens.
 
-Comments are neutral gray; documentation comments are lighter gray in dark variants and darker gray in Light and Paper. Strings inherit the former ordinary-comment olive palette, keeping literals distinct from neutral identifiers. This keeps them readable at 4.5:1 without adding italics to whole comments. The existing selective control-flow, interface/trait/concept, and lifetime italics remain unchanged.
+Comments are neutral gray; documentation comments are lighter gray in dark variants and darker gray in Light and Paper. Strings inherit the former ordinary-comment olive palette, keeping literals distinct from neutral identifiers. This keeps them readable at each variant’s contrast target without adding italics to whole comments. The existing selective control-flow, interface/trait/concept, and lifetime italics remain unchanged.
 
-The four dark variants retain their existing backgrounds. The three regular dark variants move readable foregrounds 80% toward High Contrast’s OKLab lightness while preserving hue and chroma where the sRGB gamut allows. Darker gets its character from its darker background, Stealth retains softer saturation, and High Contrast retains its brighter palette; all four share the 4.5:1 floor. Decorative colors and selection/highlight fills are configured separately so brighter text does not brighten its backdrop. UI diagnostics, player accents, and normal/bright/dim ANSI colors use coordinated earthy red, ochre, sage, and dusty blue families. UI, terminal, and syntax colors are stored independently. Dark variants use low-luminance opaque highlight fills; Light and Paper use pale opaque fills. Overlapping states do not accumulate into a contrasting backdrop that washes out the code.
+The four dark variants retain their existing editor backgrounds. The three regular dark variants move readable foregrounds 80% toward High Contrast’s OKLab lightness while preserving hue and chroma where the sRGB gamut allows. Darker gets its character from its darker background, Stealth retains softer saturation, and High Contrast retains its brighter palette; all four share the 4.5:1 floor. Decorative colors and selection/highlight fills are configured separately so brighter text does not brighten its backdrop. UI diagnostics, player accents, and normal/bright/dim ANSI colors use coordinated earthy red, ochre, sage, and dusty blue families. UI, terminal, and syntax colors are stored independently. Dark variants use low-luminance opaque highlight fills; Light and Paper use pale opaque fills. Overlapping states do not accumulate into a contrasting backdrop that washes out the code.
 
-Pale Fire Light uses a warm ivory editor (`#F5F1E8`), deeper ivory panels (`#EBE6DC`), and lighter elevated surfaces (`#FCF9F2`). Its syntax hues follow the dark family with independently tuned lightness and chroma; all separation thresholds and the 4.5:1 floor remain in force.
+Pale Fire Light uses a warm ivory editor (`#F5F1E8`), deeper ivory panels (`#EBE6DC`), and lighter elevated surfaces (`#FCF9F2`). Its syntax hues follow the dark family with independently tuned lightness and chroma; all separation thresholds remain in force, with a stronger 5.5:1 text floor shared with Paper. The light syntax palettes retain ochre keywords, copper properties, teal functions, and violet types; light-specific separation checks also cover functions versus numbers and type parameters versus variables.
 
 Pale Fire Paper uses neutral off-white (`#F4F4F0`), stone-gray panels (`#E8E8E3`), and lighter elevated surfaces (`#FCFCF9`). It keeps Light’s syntax hues with neutral charcoal identifiers (`#3D3E3B`) and a matching light terminal. Both light variants run the dark-selection, overlapping-highlight, and pale-terminal-foreground regression tests.
 
@@ -57,16 +59,16 @@ Each variant explicitly defines local and collaboration selections, inactive and
 
 Ordinary punctuation, brackets, and delimiters use a dedicated neutral halfway between variable and comment OKLab lightness. Operators retain normal text strength; keyword operators retain keyword color. Escape/interpolation markers keep their blue accents. Existing italics are unchanged.
 
-Diagnostic error/warning foregrounds use stronger earthy red/ochre; info and hints retain quieter blue/sage. Foregrounds, borders, and fills are independent of unrelated diff/status colors. `diagnostic_indicator_cases` checks diagnostic colors and borders at least 3:1 against editor states, UI surfaces/states, and their own fills. This is a limited color-pair check, not a measurement of rasterized underlines or a claim of full WCAG conformance.
+Diagnostic error/warning foregrounds use stronger earthy red/ochre; info and hints retain quieter blue/sage. Foregrounds, borders, and fills are independent of unrelated diff/status colors. `diagnostic_indicator_cases` checks diagnostic foregrounds at least 3:1 against editor states, UI surfaces/states, and their own fills. All opaque borders, including diagnostic outlines, blend their original palette color with the variant background: 35% color and 65% background in Light/Paper, and 25% color and 75% background in dark variants. Borders are excluded from this check. This is a limited color-pair check, not a measurement of rasterized underlines or a claim of full WCAG conformance.
 
 `search.active_match_background` is supported by Zed 1.24.2 and the [Zed theme color definitions](https://github.com/zed-industries/zed/blob/main/crates/theme/src/styles/colors.rs), but is absent from the vendored v0.2.0 schema. Validation explicitly requires an opaque RGB value and a different color from inactive matches. Older Zed builds may ignore this key and retain their default active-match behavior.
 
-Regression checks reject invisible selection/search fills, identical active/inactive match fills, punctuation mapped back to variables, and low-contrast diagnostic borders. Text checks include active-match overlap with document highlights, diagnostics, and selections. Numerical checks complement live visibility review.
+Regression checks reject invisible selection/search fills, identical active/inactive match fills, punctuation mapped back to variables, and low-contrast diagnostic foregrounds. Text checks include active-match overlap with document highlights, diagnostics, and selections. Numerical checks complement live visibility review.
 
 ## Exclusions and limits
 
 - `text.disabled` and `icon.disabled` represent inoperative controls and are exempt. An unfocused tab or muted label is not disabled and remains covered.
-- Borders, indent/wrap guides, scrollbar tracks, and other non-text decoration are not part of the 4.5:1 text claim. Only diagnostic foregrounds and borders receive the separate 3:1 adjacent-background check described below; this is not a general non-text contrast or full WCAG conformance claim.
+- Borders, indent/wrap guides, scrollbar tracks, and other non-text decoration are not part of the text contrast claim. Only diagnostic foregrounds receive the separate 3:1 adjacent-background check described above; this is not a general non-text contrast or full WCAG conformance claim.
 - Application-selected ANSI backgrounds, inverse video, true-color terminal output, images, and external content can create pairs outside the default-background matrix. ANSI colors serve as both foregrounds and backgrounds, so no universal terminal contrast guarantee is possible.
 - User overrides, semantic rules with custom colors, and opacity/dimming applied by Zed outside the theme can change the result. Test with unmodified theme colors. The theme does not alter user settings.
 - A theme can style only the categories a grammar or language server exposes. Color distance between roles is a separate heuristic, not a WCAG requirement or a guarantee of distinguishability for every color-vision condition.

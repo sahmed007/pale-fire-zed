@@ -4,8 +4,8 @@ import json
 import unittest
 from pathlib import Path
 
-from contrast import composite, contrast_ratio, contrast_cases, MIN_TEXT_CONTRAST, text_ratio
-from validate import validate_editor_states
+from contrast import composite, contrast_ratio, contrast_cases, MIN_TEXT_CONTRAST, text_ratio, failing_text_cases
+from validate import validate_editor_states, LIGHT_PERCEPTUAL_DISTANCE_RULES, perceptual_distance
 
 
 class ContrastTests(unittest.TestCase):
@@ -20,6 +20,41 @@ class ContrastTests(unittest.TestCase):
         self.assertEqual(contrast_ratio("#000000", "#FFFFFF"), 21)
         self.assertEqual(contrast_ratio("#FFFFFF", "#FFFFFF"), 1)
         self.assertAlmostEqual(contrast_ratio("#777777", "#FFFFFF"), 4.478089453577214)
+
+    def test_workspace_surfaces_share_one_background(self):
+        colors = {
+            "Pale Fire": "#242424", "Pale Fire Darker": "#0E0E0E",
+            "Pale Fire High Contrast": "#1B1B1B", "Pale Fire Stealth": "#222222",
+            "Pale Fire Light": "#EBE6DC", "Pale Fire Paper": "#E8E8E3",
+        }
+        surfaces = (
+            "background", "surface.background", "panel.background", "status_bar.background",
+            "title_bar.background", "title_bar.inactive_background", "tab_bar.background",
+            "tab.inactive_background", "terminal.background",
+            "terminal.ansi.background",
+        )
+        for theme in self.themes:
+            for key in surfaces:
+                with self.subTest(theme=theme["name"], surface=key):
+                    self.assertEqual(theme["style"][key], colors[theme["name"]])
+
+    def test_editor_surfaces_and_active_tabs_match_code_background(self):
+        for theme in self.themes:
+            style = theme["style"]
+            for key in ("editor.gutter.background", "editor.subheader.background", "toolbar.background", "tab.active_background"):
+                with self.subTest(theme=theme["name"], surface=key):
+                    self.assertEqual(style[key], style["editor.background"])
+
+    def test_stealth_unifies_editor_and_popup_surfaces(self):
+        style = next(theme["style"] for theme in self.themes if theme["name"] == "Pale Fire Stealth")
+        for key in ("editor.background", "editor.gutter.background", "editor.subheader.background",
+                    "toolbar.background", "elevated_surface.background", "element.background", "element.disabled"):
+            with self.subTest(surface=key):
+                self.assertEqual(style[key], "#222222")
+        for key in ("editor.active_line.background", "editor.highlighted_line.background",
+                    "search.match_background", "search.active_match_background", "element.selected"):
+            with self.subTest(highlight=key):
+                self.assertNotEqual(style[key], style["background"])
 
     def test_alpha_composites_before_luminance(self):
         result = composite("#FFFFFF80", "#000000")
@@ -59,6 +94,26 @@ class ContrastTests(unittest.TestCase):
         self.assertNotIn("text.disabled", names)
         self.assertNotIn("icon.disabled", names)
         self.assertEqual({case[0] for case in cases}, {"editor", "gutter", "ui", "terminal"})
+
+    def test_light_text_requires_five_point_five_to_one(self):
+        for name, light in self.light_themes.items():
+            with self.subTest(theme=name):
+                self.assertFalse(failing_text_cases(contrast_cases(light), "light"))
+                style = copy.deepcopy(light)
+                style["syntax"]["comment"]["color"] = "#636363"
+                cases = list(contrast_cases(style))
+                self.assertFalse(failing_text_cases(cases, "dark"))
+                failures = failing_text_cases(cases, "light")
+                self.assertTrue(failures)
+                self.assertTrue(all(case[1] == "syntax.comment" for case in failures))
+
+    def test_light_syntax_roles_stay_distinct(self):
+        for name, style in self.light_themes.items():
+            for (first, second), minimum in LIGHT_PERCEPTUAL_DISTANCE_RULES.items():
+                with self.subTest(theme=name, first=first, second=second):
+                    self.assertGreaterEqual(perceptual_distance(
+                        style["syntax"][first]["color"], style["syntax"][second]["color"]
+                    ), minimum)
 
     def test_bright_selection_cannot_hide_behind_base_contrast(self):
         style = copy.deepcopy(self.style)
@@ -128,7 +183,7 @@ class ContrastTests(unittest.TestCase):
                     elif mutation == "punctuation":
                         style["syntax"]["punctuation"] = style["syntax"]["variable"]
                     else:
-                        style["error.border"] = style["editor.background"]
+                        style["error"] = style["editor.background"]
                     with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
                         validate_editor_states(style)
 

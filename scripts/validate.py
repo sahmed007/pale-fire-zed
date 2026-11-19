@@ -11,7 +11,7 @@ from pathlib import Path
 
 from jsonschema import Draft7Validator
 
-from contrast import MIN_TEXT_CONTRAST, contrast_cases, contrast_ratio, relative_luminance, diagnostic_indicator_cases
+from contrast import minimum_text_contrast, failing_text_cases, contrast_cases, contrast_ratio, relative_luminance, diagnostic_indicator_cases
 
 ROOT = Path(__file__).resolve().parent.parent
 THEME_PATH = ROOT / "themes" / "pale-fire.json"
@@ -49,18 +49,18 @@ EXPECTED_ROLE_COLORS = {'Pale Fire': {'named_type': '#C6ACD5',
                        'doc': '#C6C6C6',
                        'unsafe': '#DEA39C',
                        'string': '#ADA88E'},
- 'Pale Fire Light': {'named_type': '#7D5487',
-                     'symbol': '#A8413E',
-                     'comment': '#636363',
-                     'doc': '#515151',
-                     'unsafe': '#A14740',
-                     'string': '#5E6905'},
- 'Pale Fire Paper': {'named_type': '#7D5487',
-                     'symbol': '#A8413E',
-                     'comment': '#636363',
-                     'doc': '#515151',
-                     'unsafe': '#A14740',
-                     'string': '#5E6905'}}
+ 'Pale Fire Light': {'named_type': '#7A3D89',
+                     'symbol': '#AB1729',
+                     'comment': '#565656',
+                     'doc': '#444444',
+                     'unsafe': '#923A41',
+                     'string': '#444C04'},
+ 'Pale Fire Paper': {'named_type': '#7A3D89',
+                     'symbol': '#AB1729',
+                     'comment': '#565656',
+                     'doc': '#444444',
+                     'unsafe': '#923A41',
+                     'string': '#444C04'}}
 NAMED_TYPE_CAPTURES = {
     "class", "enum", "struct", "type", "type.alias", "type.class",
     "type.class.definition", "type.definition", "type.enum", "type.enum.definition",
@@ -91,6 +91,10 @@ PERCEPTUAL_DISTANCE_RULES = {
     ("keyword", "property"): 0.075,
     ("symbol", "type"): 0.075,
     ("symbol", "type.parameter"): 0.075,
+}
+LIGHT_PERCEPTUAL_DISTANCE_RULES = {
+    ("function", "number"): 0.075,
+    ("type.parameter", "variable"): 0.075,
 }
 CONTROL_FLOW_CAPTURES = {
     "keyword.control", "keyword.control.conditional", "keyword.control.repeat",
@@ -313,16 +317,20 @@ def main() -> int:
 
         validate_editor_states(entry["style"])
         cases = list(contrast_cases(entry["style"]))
-        failures = [case for case in cases if case[3] < MIN_TEXT_CONTRAST]
+        minimum = minimum_text_contrast(entry["appearance"])
+        failures = failing_text_cases(cases, entry["appearance"])
         if failures:
             for section, foreground, background, ratio in sorted(failures, key=lambda case: case[3])[:20]:
-                print(f"{entry['name']} [{section}] {foreground} on {background}: {ratio:.6f}:1 < {MIN_TEXT_CONTRAST:g}:1", file=sys.stderr)
+                print(f"{entry['name']} [{section}] {foreground} on {background}: {ratio:.6f}:1 < {minimum:g}:1", file=sys.stderr)
             raise AssertionError(f"{entry['name']} has {len(failures)} failing text/background pairs")
         section, foreground, background, ratio = min(cases, key=lambda case: case[3])
         print(f"{entry['name']}: {len(cases)} text/background pairs; minimum {ratio:.6f}:1 "
               f"({foreground} on {background})")
 
-        for (first, second), minimum in PERCEPTUAL_DISTANCE_RULES.items():
+        distance_rules = dict(PERCEPTUAL_DISTANCE_RULES)
+        if entry["appearance"] == "light":
+            distance_rules.update(LIGHT_PERCEPTUAL_DISTANCE_RULES)
+        for (first, second), minimum in distance_rules.items():
             distance = perceptual_distance(styles[first]["color"], styles[second]["color"])
             assert distance >= minimum, (
                 f"{entry['name']} {first} and {second} are perceptually too close "

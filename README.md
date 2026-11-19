@@ -17,6 +17,7 @@ Pale Fire Light and Paper are original light adaptations of this palette. Both u
 
 ## Highlights
 
+- Workspace panels, title/status bars, tab strips/inactive tabs, and terminals share one background per variant. The code area, active tabs, line-number gutter, breadcrumbs, and editor subheaders share the editor background. Stealth uses the same color for all these surfaces and floating menus/dialogs; selection and interaction highlights remain visible.
 - User-defined types use gray lavender, distinct from blue-green functions and methods.
 - Built-in and primitive types use teal, distinct from blue-green functions.
 - Namespaces and modules use blue-gray, distinct from violet named types, pale blue macros, and sage-green numbers.
@@ -29,10 +30,10 @@ Pale Fire Light and Paper are original light adaptations of this palette. Both u
 - The theme includes comprehensive Tree-sitter and semantic-token mappings for consistent cross-language highlighting.
 - Ordinary punctuation recedes while operators and interpolation remain distinct.
 - Cool selections, warm search matches, and a stronger active-match fill make editor states easier to locate.
-- Diagnostic foregrounds and borders have a separate 3:1 visibility check.
+- Diagnostic foregrounds have a separate 3:1 visibility check. Borders use intentionally subdued colors and are excluded from that check.
 - Syntax highlighting does not use bold font weights.
 - UI accents and terminal colors share the earthy red, sage, ochre, and dusty blue palette. Regular dark variants keep text close to High Contrast brightness, with their own backgrounds and saturation.
-- All six variants meet the 4.5:1 AA text-contrast threshold for the tested theme-controlled text/background pairs. See [coverage and limitations](docs/contrast.md); this is not a claim of full WCAG conformance for Zed.
+- Dark variants meet a 4.5:1 minimum and Light/Paper meet a stronger 5.5:1 minimum for the tested theme-controlled text/background pairs. See [coverage and limitations](docs/contrast.md); this is not a claim of full WCAG conformance for Zed.
 
 The same italic policy applies to every language. Its appearance depends on the categories supplied by the grammar or language server: tokens reported only as generic `keyword` remain upright. Semantic highlighting follows [Zed's style mappings](https://zed.dev/docs/semantic-tokens) and can affect which style is applied; the theme does not change your semantic-token settings.
 
@@ -53,7 +54,7 @@ npm run check
 
 After rebuilding, click **Rebuild** on the installed Pale Fire development extension in Zed's Extensions page to refresh cached theme colors.
 
-The generated theme is located at `themes/pale-fire.json`. Edit `scripts/build-theme.mjs`, then regenerate it. Validation checks schema coverage, selective italics, a minimum 4.5:1 text contrast ratio across editor, UI, gutter, and default terminal states, and perceptual separation of key roles in every variant. The check reports each variant's worst contrast pair. Syntax, UI/player, and terminal palettes are independently configured. See the [contrast guide](docs/contrast.md) for the tested state matrix and exclusions.
+The generated theme is located at `themes/pale-fire.json`. Edit `scripts/build-theme.mjs`, then regenerate it. Validation checks schema coverage, selective italics, a minimum text contrast ratio of 4.5:1 for dark variants and 5.5:1 for Light/Paper across editor, UI, gutter, and default terminal states, and perceptual separation of key roles in every variant. The check reports each variant's worst contrast pair. Syntax, UI/player, and terminal palettes are independently configured. See the [contrast guide](docs/contrast.md) for the tested state matrix and exclusions.
 
 For an editor review, open the files listed in [the examples guide](examples/README.md) and cycle through all six variants. Compare namespaces with numbers, built-in types with functions, and type parameters with named types; check control flow, strings, and language-specific constructs. For example, the C++ sample includes `std::vector<int>`, numeric literals, concepts, and macros. Repeat with semantic tokens off and combined, using `dev: open highlights tree view` to inspect the categories actually emitted. Type parameters may be reported as ordinary types without semantic tokens.
 
